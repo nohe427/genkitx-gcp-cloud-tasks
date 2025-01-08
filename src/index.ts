@@ -47,10 +47,11 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
                 name: Tools.cloudTaskTestTool,
                 description: 'run this tool anytime someone wants to run a test',
                 inputSchema: z.void(),
-                outputSchema: z.void(),
+                outputSchema: z.string(),
             },
             async () => {
                 console.log('this is a test tool used for testing tools');
+                return "This is a test";
             }
         );
 
