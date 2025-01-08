@@ -31,13 +31,20 @@ export const task = z.object({
     prompt: z.string().describe('The prompt that the user would like to send at a future time.'),
 })
 
+export enum Tools {
+    cloudTaskTestTool = "cloudTaskTestTool",
+    cloudTaskCreateTask = "cloudTaskCreateTask",
+    cloudTaskCurrentDateTime = "cloudTaskCurrentDateTime",
+    cloudTaskConvertTimeToEpoch = "cloudTaskConvertTimeToEpoch",
+}
+
 export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
     const taskClient = new CloudTasksClient();
     return genkitPlugin('cloudTask', async (ai:Genkit) => {
 
         ai.defineTool(
             {
-                name: 'cloudTaskTestTool',
+                name: Tools.cloudTaskTestTool,
                 description: 'run this tool anytime someone wants to run a test',
                 inputSchema: z.void(),
                 outputSchema: z.void(),
@@ -49,7 +56,7 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
 
         ai.defineTool(
             {
-                name: 'cloudTaskCreateTask',
+                name: Tools.cloudTaskCreateTask,
                 description: 'Creates a task based on the users request that can be asynchronously executed in the future.',
                 inputSchema: z.object({
                     task: task,
@@ -80,7 +87,7 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
         
         ai.defineTool(
           {
-            name: 'cloudTaskCurrentDateTime',
+            name: Tools.cloudTaskCurrentDateTime,
             description: 'This returns the current date and time in a string format',
             inputSchema: z.void(),
             outputSchema: z.string(),
@@ -92,7 +99,7 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
         
         ai.defineTool(
           {
-            name: 'cloudTaskConvertTimeToEpoch',
+            name: Tools.cloudTaskConvertTimeToEpoch,
             description: 'Convert the time string into epoch time in seconds',
             inputSchema: z.string(),
             outputSchema: z.string(),

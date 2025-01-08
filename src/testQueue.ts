@@ -14,37 +14,3 @@
  * limitations under the License.
  */
 
-import {CloudTasksClient} from '@google-cloud/tasks';
-
-function currentTime() {
-    const now = new Date().toString();
-    console.log(now);
-    const then = new Date(now);
-    console.log(then.getTime());
-
-}
-
-function main() {
-
-    console.log(JSON.stringify({data: {text: "Chicken parm recipe", image:""}}))
-    const taskClient = new CloudTasksClient();
-    taskClient.createTask({
-        parent: "projects/lon-next/locations/us-central1/queues/queueA",
-        task:{
-            // scheduleTime: {seconds: "1736458277"},
-            httpRequest: {
-                url: 'https://genkit-inst-1039410413539.us-central1.run.app/customerAgent',
-                httpMethod: "POST",
-                body: Buffer.from(JSON.stringify({data: {text: "Chicken parm recipe", image:""}})).toString("base64"),
-                headers: {'Content-Type': 'application/json'},
-            }
-        },
-        responseView: 'FULL',
-    }).then((result) => {
-        console.log(result[0].name);
-        console.log(result);
-    })
-}
-
-// currentTime();
-main();
