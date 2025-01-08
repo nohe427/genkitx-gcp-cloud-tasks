@@ -25,6 +25,7 @@ function currentTime() {
 }
 
 function main() {
+
     console.log(JSON.stringify({data: {text: "Chicken parm recipe", image:""}}))
     const taskClient = new CloudTasksClient();
     taskClient.createTask({
@@ -32,8 +33,8 @@ function main() {
         task:{
             // scheduleTime: {seconds: "1736458277"},
             httpRequest: {
-                url: '',
-                httpMethod: 'POST',
+                url: 'https://genkit-inst-1039410413539.us-central1.run.app/customerAgent',
+                httpMethod: "POST",
                 body: Buffer.from(JSON.stringify({data: {text: "Chicken parm recipe", image:""}})).toString("base64"),
                 headers: {'Content-Type': 'application/json'},
             }
