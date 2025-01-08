@@ -34,9 +34,10 @@ export const task = z.object({
 export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
     const taskClient = new CloudTasksClient();
     return genkitPlugin('cloudTask', async (ai:Genkit) => {
+
         ai.defineTool(
             {
-                name: 'testTool',
+                name: 'cloudTaskTestTool',
                 description: 'run this tool anytime someone wants to run a test',
                 inputSchema: z.void(),
                 outputSchema: z.void(),
@@ -45,6 +46,7 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
                 console.log('this is a test tool used for testing tools');
             }
         );
+
         ai.defineTool(
             {
                 name: 'cloudTaskCreateTask',
@@ -54,19 +56,50 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
                 }),
             outputSchema: z.string(),
             },
-            async (input) => {
-                taskClient.createTask({
-                    parent: `projects/${options.projectId}/locations/${options.region}/queues/${options.queueName}`,
+            async (input): Promise<string> => {
+                const parent =`projects/${options.projectId}/locations/${options.region}/queues/${options.queueName}`;
+                const result = await taskClient.createTask({
+                    parent: parent,
                     task:{
                         scheduleTime: {seconds: input.task.scheduledTime},
                         httpRequest: {
                             url: options.defaultHttpEndpoint,
-                            httpMethod: "POST",
+                            headers: {'Content-Type': 'application/json'},
+                            httpMethod: 'POST',
                             body: Buffer.from(JSON.stringify({data: {prompt: input.task.prompt}})).toString('base64'),
                         }
                 }})
-                return "";
+                const outName = result[0].name;
+                let name = "could not determine name";
+                if (outName) {
+                  name = outName.replace(`${parent}/tasks`, "");
+                }
+                return name;
             }
         );
+        
+        ai.defineTool(
+          {
+            name: 'cloudTaskCurrentDateTime',
+            description: 'This returns the current date and time in a string format',
+            inputSchema: z.void(),
+            outputSchema: z.string(),
+          },
+          async (input) => {
+            return new Date().toString();
+          }
+        );
+        
+        ai.defineTool(
+          {
+            name: 'cloudTaskConvertTimeToEpoch',
+            description: 'Convert the time string into epoch time in seconds',
+            inputSchema: z.string(),
+            outputSchema: z.string(),
+          },
+          async (input) => {
+            return ((new Date(input).getTime())/1000).toString();
+          }
+        )
     });
 }

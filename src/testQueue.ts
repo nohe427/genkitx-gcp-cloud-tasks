@@ -17,7 +17,11 @@
 import {CloudTasksClient} from '@google-cloud/tasks';
 
 function currentTime() {
-    console.log(Math.floor(Date.now()/1000));
+    const now = new Date().toString();
+    console.log(now);
+    const then = new Date(now);
+    console.log(then.getTime());
+
 }
 
 function main() {
@@ -26,10 +30,10 @@ function main() {
     taskClient.createTask({
         parent: "projects/lon-next/locations/us-central1/queues/queueA",
         task:{
-            scheduleTime: {seconds: "1736458277"},
+            // scheduleTime: {seconds: "1736458277"},
             httpRequest: {
                 url: '',
-                httpMethod: "POST",
+                httpMethod: 'POST',
                 body: Buffer.from(JSON.stringify({data: {text: "Chicken parm recipe", image:""}})).toString("base64"),
                 headers: {'Content-Type': 'application/json'},
             }
@@ -37,8 +41,9 @@ function main() {
         responseView: 'FULL',
     }).then((result) => {
         console.log(result[0].name);
+        console.log(result);
     })
 }
 
-currentTime();
-// main();
+// currentTime();
+main();

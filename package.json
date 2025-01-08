@@ -2,8 +2,10 @@
   "name": "genkitx-gcp-cloud-tasks",
   "version": "0.0.1",
   "description": "A Genkit Extension that adds tool calling for repetitive asynchronous tasks.",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,13 +19,18 @@
     "cloud",
     "tasks"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "author": "Nohe",
   "license": "Apache-2.0",
   "devDependencies": {
     "typescript": "^5.7.2"
   },
-  "dependencies": {
-    "@google-cloud/tasks": "^5.5.2",
+  "peerDependencies": {
     "genkit": "^0.9.12"
+  },
+  "dependencies": {
+    "@google-cloud/tasks": "^5.5.2"
   }
 }
