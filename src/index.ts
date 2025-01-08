@@ -46,7 +46,7 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
             {
                 name: Tools.cloudTaskTestTool,
                 description: 'run this tool anytime someone wants to run a test',
-                inputSchema: z.void(),
+                inputSchema: z.object({}),
                 outputSchema: z.string(),
             },
             async () => {
@@ -90,7 +90,7 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
           {
             name: Tools.cloudTaskCurrentDateTime,
             description: 'This returns the current date and time in a string format',
-            inputSchema: z.void(),
+            inputSchema: z.object({}),
             outputSchema: z.string(),
           },
           async (input) => {
@@ -102,11 +102,13 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
           {
             name: Tools.cloudTaskConvertTimeToEpoch,
             description: 'Convert the time string into epoch time in seconds',
-            inputSchema: z.string(),
+            inputSchema: z.object({
+                timeString: z.string()
+            }),
             outputSchema: z.string(),
           },
           async (input) => {
-            return ((new Date(input).getTime())/1000).toString();
+            return ((new Date(input.timeString).getTime())/1000).toString();
           }
         )
     });
