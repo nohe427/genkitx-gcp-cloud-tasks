@@ -47,7 +47,7 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
         );
         ai.defineTool(
             {
-                name: 'cloudTaskcreateTask',
+                name: 'cloudTaskCreateTask',
                 description: 'Creates a task based on the users request that can be asynchronously executed in the future.',
                 inputSchema: z.object({
                     task: task,
@@ -67,6 +67,6 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
                 }})
                 return "";
             }
-    )
+        );
     });
 }
