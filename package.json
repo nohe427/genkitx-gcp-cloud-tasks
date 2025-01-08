@@ -1,0 +1,29 @@
+{
+  "name": "genkitx-gcp-cloud-tasks",
+  "version": "0.0.1",
+  "description": "A Genkit Extension that adds tool calling for repetitive asynchronous tasks.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/nohe427/genkitx-gcp-cloud-tasks"
+  },
+  "keywords": [
+    "genkit",
+    "firebase",
+    "gcp",
+    "cloud",
+    "tasks"
+  ],
+  "author": "Nohe",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@google-cloud/tasks": "^5.5.2",
+    "genkit": "^0.9.12"
+  }
+}
