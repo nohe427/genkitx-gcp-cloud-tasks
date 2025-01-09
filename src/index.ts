@@ -31,7 +31,7 @@ export interface CloudSchedulerPluginOptions {
     projectId: string,
     region: string,
     defaultHttpEndpoint: string,
-    retryConfig: {
+    retryConfig?: {
         retryCount?: number,
         maxRetryDuration?: string,
         minBackoffDuration?: string,
