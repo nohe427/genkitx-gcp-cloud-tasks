@@ -63,7 +63,7 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
             {
                 name: Tools.cloudTaskCreateTask,
                 description: 'Creates a task based on the users request that can be asynchronously executed in the future.',
-                inputSchema: CloudTasksCreateInputSchema,
+                inputSchema: CloudTasksTask,
             outputSchema: z.string(),
             },
             async (input): Promise<string> => {
@@ -71,12 +71,12 @@ export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {
                 const result = await taskClient.createTask({
                     parent: parent,
                     task:{
-                        scheduleTime: {seconds: input.Task.scheduledTime},
+                        scheduleTime: {seconds: input.scheduledTime},
                         httpRequest: {
                             url: options.defaultHttpEndpoint,
                             headers: {'Content-Type': 'application/json'},
                             httpMethod: 'POST',
-                            body: Buffer.from(JSON.stringify({data: {prompt: input.Task.prompt}})).toString('base64'),
+                            body: Buffer.from(JSON.stringify({data: {prompt: input.prompt}})).toString('base64'),
                         }
                 }})
                 const outName = result[0].name;
