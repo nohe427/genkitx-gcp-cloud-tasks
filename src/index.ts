@@ -17,6 +17,7 @@
 import { Genkit, z } from 'genkit';
 import { GenkitPlugin, genkitPlugin } from 'genkit/plugin';
 import {CloudTasksClient} from '@google-cloud/tasks';
+import { CloudSchedulerClient } from '@google-cloud/scheduler';
 
 export interface CloudTaskPluginOptions {
     projectId: string,
@@ -24,6 +25,19 @@ export interface CloudTaskPluginOptions {
     dispatchDeadlineDuration?: string,
     defaultHttpEndpoint: string,
     region: string,
+}
+
+export interface CloudSchedulerPluginOptions {
+    projectId: string,
+    region: string,
+    defaultHttpEndpoint: string,
+    retryConfig: {
+        retryCount?: number,
+        maxRetryDuration?: string,
+        minBackoffDuration?: string,
+        maxBackoffDuration?: string,
+        maxDoublings?: number,
+    },
 }
 
 export const CloudTasksTask = z.object({
@@ -35,11 +49,59 @@ export const CloudTasksCreateInputSchema = z.object({
     Task: CloudTasksTask,
 })
 
+export const CloudSchedulerCreateJobSchema = z.object({
+    schedule: z.string().describe('Describes the schedule on which the job will be executed. The schedule can be either of the following types: Crontab or English-like schedule'),
+    timezone: z.string().describe('Specifies the time zone to be used in interpreting schedule. The value of this field must be a time zone name from the tz database. If needed default to : America/Los_Angeles'),
+    prompt: z.string().describe('the user request that will be used in the message of the created job'),
+});
+
 export enum Tools {
     cloudTaskTestTool = "cloudTaskTestTool",
     cloudTaskCreateTask = "cloudTaskCreateTask",
     cloudTaskCurrentDateTime = "cloudTaskCurrentDateTime",
     cloudTaskConvertTimeToEpoch = "cloudTaskConvertTimeToEpoch",
+    cloudSchedulerCreateJob = "cloudSchedulerCreateJob",
+}
+
+export function CloudScheduler(options: CloudSchedulerPluginOptions): GenkitPlugin {
+    const parent = `projects/${options.projectId}/locations/${options.region}`
+    const schedulerClient = new CloudSchedulerClient();
+    return genkitPlugin('cloudScheduler', async (ai: Genkit) => {
+
+        ai.defineTool(
+            {
+                name: Tools.cloudSchedulerCreateJob,
+                description: 'run this tool to create a recurring job in cron format',
+                inputSchema: CloudSchedulerCreateJobSchema,
+                outputSchema: z.string(),
+            },
+            async (input) => {
+                schedulerClient.createJob({
+                    parent: parent,
+                    job: {
+                        schedule: input.schedule,
+                        timeZone: input.timezone,
+                        httpTarget:{
+                            uri: options.defaultHttpEndpoint,
+                            headers: {'Content-Type': 'application/json'},
+                            httpMethod: 'POST',
+                            body: Buffer.from(JSON.stringify({data: {prompt: input.prompt}})).toString('base64'),
+                        },
+                        retryConfig: {
+                            retryCount: 0,
+                            // TODO(@nohe427): Use the config object to set these correctly.
+                            maxRetryDuration: {seconds: 0},
+                            minBackoffDuration: {seconds: 5},
+                            maxBackoffDuration: {seconds: 5},
+                            maxDoublings: 5,
+                        },
+                    }
+                })
+                return "This is a test";
+            }
+        )
+
+    });
 }
 
 export function CloudTask(options: CloudTaskPluginOptions): GenkitPlugin {

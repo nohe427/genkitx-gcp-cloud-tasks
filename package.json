@@ -1,6 +1,6 @@
 {
   "name": "@nohe427/genkitx-gcp-cloud-tasks",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A Genkit Extension that adds tool calling for repetitive asynchronous tasks.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -31,6 +31,7 @@
     "genkit": "^0.9.12"
   },
   "dependencies": {
+    "@google-cloud/scheduler": "^4.3.0",
     "@google-cloud/tasks": "^5.5.2"
   },
   "directories": {
