@@ -76,7 +76,7 @@ export function CloudScheduler(options: CloudSchedulerPluginOptions): GenkitPlug
                 outputSchema: z.string(),
             },
             async (input) => {
-                schedulerClient.createJob({
+                const job = await schedulerClient.createJob({
                     parent: parent,
                     job: {
                         schedule: input.schedule,
@@ -97,7 +97,8 @@ export function CloudScheduler(options: CloudSchedulerPluginOptions): GenkitPlug
                         },
                     }
                 })
-                return "This is a test";
+                const name = job[0].name || "no name created";
+                return name;
             }
         )
 
